@@ -1,6 +1,4 @@
-# **Speaker Script: "Major Industries of the World" (Blue House Team)**
-
----
+# **Speaker Script: "Major Industries Of World" (Blue House Team)**
 
 ## **Slide 1: Title Slide**
 
