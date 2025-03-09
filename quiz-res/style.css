@@ -8,7 +8,7 @@
 }
 
 body{
-    background-image: url(/bg.jpg)/*url("https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2021/06/17.-Sea-Lord.png?q=50&fit=crop&w=750&dpr=1.5")*/;
+    background-image: url("https://bl-apis.tiiny.site/bg.jpg")/*url("https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2021/06/17.-Sea-Lord.png?q=50&fit=crop&w=750&dpr=1.5")*/;
     background-repeat: repeat;
     background-size: 150%;
 }
