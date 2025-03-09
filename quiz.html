@@ -3,258 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KBC Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: black;
-            color: white;
-            text-align: center;
-            margin: 0;
-            overflow: hidden;
-        }
-        #gameContainer {
-            width: 90%;
-            max-width: 800px;
-            margin: auto;
-            position: relative;
-            padding-top: 20px;
-        }
-        #logo {
-            width: 200px;
-            display: block;
-            margin: 20px auto;
-        }
-        #questionBox {
-            background: #192a56;
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            font-size: 20px;
-            margin: 20px auto;
-            width: 80%;
-            max-width: 600px;
-            border: 2px solid gold;
-            text-align: center;
-        }
-        .option {
-            display: block;
-            background: #273c75;
-            padding: 15px;
-            margin: 10px auto;
-            width: 70%;
-            max-width: 500px;
-            border-radius: 10px;
-            border: 2px solid white;
-            cursor: pointer;
-            font-size: 18px;
-            transition: 0.3s;
-        }
-        .option:hover {
-            background: #40739e;
-        }
-        .selected {
-            background: #e1b12c;
-            border: 2px solid gold;
-        }
-        .locked {
-            background: #4cd137 !important;
-            border: 2px solid #44bd32 !important;
-        }
-        #timer {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            width: 80px;
-            height: 40px;
-            background: conic-gradient(gold 0deg, black 0deg);
-            border-top-left-radius: 100px;
-            border-top-right-radius: 100px;
-            border-bottom: none;
-            text-align: center;
-            line-height: 40px;
-            font-weight: bold;
-        }
-        #sidebar {
-            position: absolute;
-            right: 10px;
-            top: 100px;
-            width: 150px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        .level {
-            padding: 5px;
-            margin: 3px 0;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .active {
-            background: gold;
-            color: black;
-            font-weight: bold;
-        }
-        /* Mobile Buttons */
-        .mobileBtn {
-            width: 80%;
-            max-width: 200px;
-            padding: 10px;
-            font-size: 18px;
-            background: gold;
-            color: black;
-            border: none;
-            border-radius: 5px;
-            margin: 10px auto;
-            display: none;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .mobileBtn:hover {
-            background: orange;
-        }
-        @media (max-width: 768px) {
-            #gameContainer {
-                text-align: center;
-            }
-            #sidebar {
-                position: relative;
-                margin: auto;
-                width: 80%;
-            }
-        }
-    </style>
+    <title>KBC | Rapid Fire Quiz</title>
+    <link rel="stylesheet" href="quiz-res/style.css">
+    <!-- FontAweome CDN Link for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 </head>
 <body>
+    <!-- start Quiz button -->
+    <div class="start_btn"><button>Start Quiz</button></div>
 
-    <img id="logo" src="KBC.png" alt="KBC Logo">
-    
-    <div id="gameContainer">
-        <div id="timer">30</div>
-        <div id="questionBox">Loading...</div>
-        <div id="options"></div>
-        <div id="sidebar">
-            <h3>Question Levels</h3>
-            <div id="levels"></div>
+    <!-- Info Box -->
+    <div class="info_box">
+        <div class="info-title"><span>Some Rules of this Rapid Fire Quiz</span></div>
+        <div class="info-list">
+           <div class="info">1. There are 10 questions</div>
+            <div class="info">2. You will have only <span>15 seconds</span> per each question.</div>
+            <div class="info">3. Once you select your answer, it can't be undone.</div>
+            <div class="info">4. You can't select any option once time goes off.</div>
+            <div class="info">5. You can't exit from the Quiz while you're playing.</div>
+            <div class="info">6. You'll get points on the basis of your correct answers.</div>
         </div>
-        <div id="buttons"></div> <!-- Mobile buttons will be created here -->
+        <div class="buttons">
+            <button class="quit">Exit Quiz</button>
+            <button class="restart">Continue</button>
+        </div>
     </div>
 
-    <script>
-        const questions = [
-         { q: "Which country is NOT one of the major automobile production hubs?", opts: ["USA", "Germany", "Japan", "Brazil"], ans: 3 },
-         { q: "Which trend is shaping the future of the automobile industry?", opts: ["More gasoline vehicles", "Increased diesel engine use", "Focus on electric vehicles & sustainability", "Removing automation in car manufacturing"], ans: 2 },
-         { q: "When did India's automobile industry see rapid growth due to economic reforms?", opts: ["1940s", "1980s", "1990s", "2000s"], ans: 2 },
-         { q: "What is India's global rank in the automobile market?", opts: ["First", "Fourth", "Seventh", "Tenth"], ans: 1 },
-         { q: "Which of these is NOT a primary cause of industrial pollution in the automobile sector?", opts: ["Outdated technology", "Poor waste management", "Use of electric vehicles", "Reliance on fossil fuels"], ans: 2 },
-         { q: "Which type of pollution is directly caused by industrialization in the automobile sector?", opts: ["Air pollution", "Noise pollution", "Water pollution", "All of the above"], ans: 3 },
-         { q: "Which of the following strategies can help reduce automobile industrial pollution?", opts: ["Using outdated technology", "Increasing fossil fuel usage", "Implementing cleaner production techniques", "Ignoring regulatory measures"], ans: 2 },
-         { q: "What is India's role in the electric vehicle (EV) market?", opts: ["Largest producer in the world", "Significant export hub for EVs", "EV production is banned in India", "No EV production in India"], ans: 1 },
-         { q: "What does a circular economy in the automobile industry aim to achieve?", opts: ["Reducing waste and maximizing resource efficiency", "Making vehicles heavier", "Increasing fuel consumption", "Banning electric vehicles"], ans: 0 },
-         { q: "Which organization provides global reports on industrial pollution?", opts: ["FIFA", "NASA", "United Nations Environment Programme (UNEP)", "Google"], ans: 2 }
-        ];
+    <!-- Quiz Box -->
+    <div class="quiz_box">
+        <header>
+            <div class="title">Rapid Fire Quiz</div>
+            <div class="timer">
+                <div class="time_left_txt">Time Left</div>
+                <div class="timer_sec">15</div>
+            </div>
+            <div class="time_line"></div>
+        </header>
+        <section>
+            <div class="que_text">
+                <!-- Here I've inserted question from JavaScript -->
+            </div>
+            <div class="option_list">
+                <!-- Here I've inserted options from JavaScript -->
+            </div>
+        </section>
 
-        let currentQuestion = 0;
-        let selectedOption = null;
-        let locked = false;
-        let timerValue = 30;
-        let interval;
+        <!-- footer of Quiz Box -->
+        <footer>
+            <div class="total_que">
+                <!-- Here I've inserted Question Count Number from JavaScript -->
+            </div>
+            <button class="next_btn">Next Que</button>
+        </footer>
+    </div>
 
-        function loadQuestion() {
-            if (currentQuestion >= questions.length) {
-                alert("Game Over! You completed all questions.");
-                return;
-            }
-            document.getElementById("questionBox").innerText = questions[currentQuestion].q;
-            let optionsHtml = "";
-            questions[currentQuestion].opts.forEach((opt, index) => {
-                optionsHtml += `<div class="option" onclick="selectOption(${index})">${String.fromCharCode(65 + index)}. ${opt}</div>`;
-            });
-            document.getElementById("options").innerHTML = optionsHtml;
-            document.getElementById("levels").innerHTML = questions.map((q, i) => 
-                `<div class="level ${i === currentQuestion ? 'active' : ''}">${i + 1}</div>`).join('');
-            
-            selectedOption = null;
-            locked = false;
-            resetTimer();
-            createButtons();
-        }
+    <!-- Result Box -->
+    <div class="result_box">
+        <div class="icon">
+            <img src="quiz-res/KBC.png" alt="KBC image">
+            <!--<i class="fas fa-crown"></i>-->
+        </div>
+        <div class="complete_text">You've completed the Quiz!</div>
+        <div class="score_text">
+            <!-- Here I've inserted Score Result from JavaScript -->
+        </div>
+        <div class="buttons">
+            <button class="restart">Replay Quiz</button>
+            <button class="quit">Quit Quiz</button>
+        </div>
+    </div>
 
-        function selectOption(index) {
-            if (locked) return;
-            document.querySelectorAll(".option").forEach(opt => opt.classList.remove("selected"));
-            document.querySelectorAll(".option")[index].classList.add("selected");
-            selectedOption = index;
-        }
-
-        function lockAnswer() {
-            if (selectedOption === null || locked) return;
-            locked = true;
-            document.querySelectorAll(".option")[selectedOption].classList.add("locked");
-        }
-
-        function nextQuestion() {
-            if (currentQuestion < questions.length - 1) {
-                currentQuestion++;
-                loadQuestion();
-            } else {
-                alert("Game Over!");
-                clearInterval(interval);
-            }
-        }
-
-        function resetTimer() {
-            clearInterval(interval);
-            timerValue = 30;
-            updateTimer();
-            interval = setInterval(() => {
-                timerValue--;
-                updateTimer();
-                if (timerValue <= 0) {
-                    clearInterval(interval);
-                    alert("Time's up! Moving to next question.");
-                    nextQuestion();
-                }
-            }, 1000);
-        }
-
-        function updateTimer() {
-            const timer = document.getElementById("timer");
-            const angle = (timerValue / 30) * 180;
-            timer.style.background = `conic-gradient(gold ${angle}deg, black ${angle}deg)`;
-            timer.innerText = timerValue;
-        }
-
-        function createButtons() {
-            let buttonsDiv = document.getElementById("buttons");
-            buttonsDiv.innerHTML = "";
-
-            if (window.innerWidth < 768) {
-                let lockBtn = document.createElement("button");
-                lockBtn.innerText = "Lock Answer";
-                lockBtn.classList.add("mobileBtn");
-                lockBtn.onclick = lockAnswer;
-
-                let nextBtn = document.createElement("button");
-                nextBtn.innerText = "Next Question";
-                nextBtn.classList.add("mobileBtn");
-                nextBtn.onclick = nextQuestion;
-
-                buttonsDiv.appendChild(lockBtn);
-                buttonsDiv.appendChild(nextBtn);
-            }
-        }
-
-        document.addEventListener("keydown", (event) => {
-            if (event.key.toUpperCase() === "L") lockAnswer();
-            if (event.key.toUpperCase() === "N") nextQuestion();
-        });
-
-        window.addEventListener("resize", createButtons);
-
-        loadQuestion();
-    </script>
+    <!-- Inside this JavaScript file I've coded all Quiz Codes -->
+    <script src="quiz-res/script.js"></script>
 
 </body>
+</html>
 </html>
