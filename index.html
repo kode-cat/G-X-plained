@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Population Dynamics - If The World Had 100 People</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/theme/white.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+    }
+    
+    .highlight {
+      color: #07f;
+      font-weight: bold;
+    }
+    
+    chart-box {
+      display: block;
+      width: 90%;
+      max-width: 700px;
+      margin: 20px auto;
+      background: #f8f8f8;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
+    
+    .btn {
+      background: #3b82f6 !important;
+      border: none;
+      color: #ffffff !important;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section>
+        <h1>🌍 If the World Had Only 100 People</h1>
+        <p class="highlight">An Interactive Look at Population Dynamics</p>
+      </section>
+      <section>
+        <h2>Why 100 People?</h2>
+        <p>Scaling global stats down to 100 makes them easier to understand visually.</p>
+        <ul>
+          <li>1 person = 1%</li>
+          <li>Easy to imagine</li>
+          <li>More relatable</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h2>World Population by Region</h2>
+        <chart-box type="doughnut" id="regionChart">
+          {
+          "labels": ["Asia", "Africa", "Europe", "Latin America", "North America", "Oceania"],
+          "data": [60, 17, 10, 8, 5, 1],
+          "colors": ["#36a2eb", "#4bc0c0", "#ffcd56", "#ff6384", "#9966ff", "#c9cbcf"]
+          }
+        </chart-box>
+      </section>
+      
+      <section>
+        <h2>Age Distribution</h2>
+        <chart-box type="bar" id="ageChart">
+          {
+          "labels": ["&lt;15", "15&ndash;64", "65+"],
+          "data": [26, 66, 8],
+          "colors": ["#07f"]
+          }
+        </chart-box>
+      </section>
+      
+      <section>
+        <h2>Population Pyramid</h2>
+        <chart-box type="bar" id="pyramidChart">
+          {
+          "labels": ["0&ndash;4", "5&ndash;9", "10&ndash;14", "15&ndash;19", "20&ndash;24", "25&ndash;29"],
+          "datasets": [
+          { "label": "Males", "data": [-5, -6, -7, -6, -5, -4], "color": "#36a2eb" },
+          { "label": "Females", "data": [5, 6, 7, 6, 5, 4], "color": "#ff6384" }
+          ]
+          }
+        </chart-box>
+      </section>
+      
+      <section>
+        <h2>Birth vs Death Rates</h2>
+        <chart-box type="line" id="rateChart">
+          {
+          "labels": ["2000", "2010", "2020", "2030"],
+          "datasets": [
+          { "label": "Birth Rate", "data": [2.1, 2.4, 2.3, 2.2], "color": "#4bc0c0" },
+          { "label": "Death Rate", "data": [1.2, 1.3, 1.4, 1.5], "color": "#ff6384" }
+          ]
+          }
+        </chart-box>
+      </section>
+      
+      <section>
+        <h2>Natural Increase</h2>
+        <p>Natural Increase = Births - Deaths</p>
+        <ul>
+          <li>If 2 babies born, 1 person dies → Net increase = 1</li>
+          <li>Impacts population growth</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h2>Doubling Time</h2>
+        <p>If growth rate is 2%, population doubles in about 35 years.</p>
+        <p><em>Doubling Time = 70 &divide; Growth Rate</em></p>
+      </section>
+      
+      <section>
+        <h2>Push & Pull Factors (Migration)</h2>
+        <ul>
+          <li class="fragment"><strong>Push:</strong> war, unemployment, disaster</li>
+          <li class="fragment"><strong>Pull:</strong> jobs, safety, better quality of life</li>
+        </ul>
+      </section>
+      
+      <section>
+        <h2>Compare Countries</h2>
+        <p>Select a country to view its population pyramid (Coming Soon)</p>
+      </section>
+      
+      <section>
+        <h2>
+          <a class="btn" href="https://kode-cat.github.io/G-X-plained/quiz.html">Quiz Time!</a>
+        </h2>
+      </section>
+      
+      <section>
+        <h2>Thank You!</h2>
+        <p class="highlight">Explore. Understand. Act.</p>
+      </section>
+    </div>
+    
+  </div>
+  <script src="https://unpkg.com/reveal.js/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/kode-cat/Flaro@latest/Flaro.js"></script>
+  <script>
+    Reveal.initialize({ hash: true, transition: 'fade' });
+    
+    Flaro('chart-box').each((i, el) => {
+      const $el = Flaro(el);
+      const config = JSON.parse(el.innerText.trim().replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&ndash;/g, '–').replace(/&divide;/g, '/'));
+      const ctx = document.createElement('canvas');
+      el.innerHTML = '';
+      el.appendChild(ctx);
+      
+      const type = el.getAttribute('type') || 'bar';
+      let chartData = {};
+      
+      if (config.datasets) {
+        chartData = {
+          labels: config.labels,
+          datasets: config.datasets.map(d => ({
+            label: d.label,
+            data: d.data,
+            backgroundColor: d.color,
+            borderColor: d.color,
+            fill: type === 'line' ? false : true,
+            tension: 0.3
+          }))
+        };
+      } else {
+        chartData = {
+          labels: config.labels,
+          datasets: [{
+            data: config.data,
+            backgroundColor: config.colors || '#07f'
+          }]
+        };
+      }
+      
+      const options = {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } },
+        indexAxis: el.id === 'pyramidChart' ? 'y' : (type === 'bar' && el.id === 'ageChart' ? 'y' : 'x'),
+        scales: el.id === 'pyramidChart' ? {
+          x: {
+            stacked: true,
+            ticks: {
+              callback: value => Math.abs(value)
+            }
+          },
+          y: { stacked: true }
+        } : {}
+      };
+      
+      new Chart(ctx, { type, data: chartData, options });
+    });
+  </script>
+</body>
+
+</html>
