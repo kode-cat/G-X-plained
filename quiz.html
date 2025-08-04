@@ -1,229 +1,409 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KBC | Rapid Fire Quiz</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
-    * {margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
     body {
       background-image: url(https://bl-apis.tiiny.site/bg.jpg);
       background-repeat: repeat;
       background-size: 150%;
     }
-    ::selection {color:#fff;background:purple;}
-    .start_btn,.info_box,.quiz_box,.result_box {
-      position: absolute;top: 50%;left: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow:0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    ::selection {
+      color: #fff;
+      background: purple;
     }
-    .info_box.activeInfo,.quiz_box.activeQuiz,.result_box.activeResult {
-      opacity:1;z-index:5;pointer-events:auto;transform:translate(-50%,-50%) scale(1);
+    .start_btn,
+    .info_box,
+    .quiz_box,
+    .result_box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    }
+    .info_box.activeInfo,
+    .quiz_box.activeQuiz,
+    .result_box.activeResult {
+      opacity: 1;
+      z-index: 5;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
     }
     .start_btn button {
-      font-size:25px;font-weight:500;color:purple;padding:15px 30px;outline:none;border:none;border-radius:5px;background:#fff;cursor:pointer;
+      font-size: 25px;
+      font-weight: 500;
+      color: purple;
+      padding: 15px 30px;
+      outline: none;
+      border: none;
+      border-radius: 5px;
+      background: #fff;
+      cursor: pointer;
     }
     .info_box {
-      width:540px;background:#fff;border-radius:5px;transform:translate(-50%,-50%) scale(0.9);opacity:0;pointer-events:none;transition:all 0.3s ease;
-    }
-    .info_box .info-title {height:60px;width:100%;border-bottom:1px solid lightgrey;display:flex;align-items:center;padding:0 30px;border-radius:5px 5px 0 0;font-size:20px;font-weight:600;}
-    .info_box .info-list {padding:15px 30px;}
-    .info_box .info-list .info {margin:5px 0;font-size:17px;}
-    .info_box .info-list .info span {font-weight:600;color:purple;}
-    .info_box .buttons {height:60px;display:flex;align-items:center;justify-content:flex-end;padding:0 30px;border-top:1px solid lightgrey;}
-    .info_box .buttons button {
-      margin:0 5px;height:40px;width:100px;font-size:16px;font-weight:500;cursor:pointer;border:none;outline:none;border-radius:5px;border:1px solid purple;transition:all 0.3s ease;
-    }
-    .quiz_box {
-      width:550px;background:#fff;border-radius:5px;transform:translate(-50%,-50%) scale(0.9);opacity:0;pointer-events:none;transition:all 0.3s ease;
-    }
-    .quiz_box header {
-      position:relative;z-index:2;height:70px;padding:0 30px;background:#fff;border-radius:5px 5px 0 0;display:flex;align-items:center;justify-content:space-between;box-shadow:0px 3px 5px 1px rgba(0,0,0,0.1);
-    }
-    .quiz_box header .title {font-size:20px;font-weight:600;}
-    .quiz_box header .timer {
-      color:#fff;background:#800080;border:1px solid #600060;height:45px;padding:0 8px;border-radius:5px;display:flex;align-items:center;justify-content:space-between;width:145px;
-    }
-    .quiz_box header .timer .time_left_txt {font-weight:400;font-size:17px;user-select:none;}
-    .quiz_box header .timer .timer_sec {font-size:18px;font-weight:500;height:30px;width:45px;color:#000;border-radius:5px;line-height:30px;text-align:center;background:#fefefe;border:1px solid mediumpurple;user-select:none;}
-    .quiz_box header .time_line {position:absolute;bottom:0px;left:0px;height:3px;background:purple;}
-    section {padding:25px 30px 20px 30px;background:#fff;}
-    section .que_text {font-size:25px;font-weight:600;user-select: none;}
-    section .option_list {padding:20px 0px;display:block;}
-    section .option_list .option {
-      background:#ffeeff;border:1px solid #a8b0fe;border-radius:5px;padding:8px 15px;font-size:17px;margin-bottom:15px;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:space-between;
-      opacity:1;
-    }
-    section .option_list .option:last-child {margin-bottom:0px;}
-    section .option_list .option:hover {color:#004085;background:#cce5ff;border:1px solid #b8daff;}
-    section .option_list .option.correct {color:#155724;background:#d4edda;border:1px solid #c3e6cb;}
-    section .option_list .option.incorrect {color:#721c24;background:#f8d7da;border:1px solid #f5c6cb;}
-    section .option_list .option.disabled {pointer-events:none;opacity:.5;}
-    .option_list.hide-options { opacity: 0.2; pointer-events: none; }
-    .option_list.show-options { opacity: 1; pointer-events: auto; }
-    section .option_list .option .icon {
-      height:26px;width:26px;border:2px solid transparent;border-radius:50%;text-align:center;font-size:13px;pointer-events:none;transition:all 0.3s ease;line-height:24px;
-    }
-    .option_list .option .icon.tick {color:#23903c;border-color:#23903c;background:#d4edda;}
-    .option_list .option .icon.cross {color:#a42834;background:#f8d7da;border-color:#a42834;}
-    footer {height:60px;padding:0 30px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid lightgrey;}
-    footer .total_que span {display:flex;user-select:none;}
-    footer .total_que span p {font-weight:500;padding:0 5px;}
-    footer .total_que span p:first-child {padding-left:0px;}
-    footer button {
-      height:40px;padding:0 13px;font-size:18px;font-weight:400;cursor:pointer;border:none;outline:none;color:#fff;border-radius:5px;background:purple;border:1px solid purple;line-height:10px;opacity:0;pointer-events:none;transform:scale(0.95);transition:all 0.3s ease;
-    }
-    footer button.show {opacity:1;pointer-events:auto;transform:scale(1);}
-    .result_box {background:#fff;border-radius:5px;display:flex;padding:25px 30px;width:450px;align-items:center;flex-direction:column;justify-content:center;transform:translate(-50%,-50%) scale(0.9);opacity:0;pointer-events:none;transition:all 0.3s ease;}
-    .result_box .icon {font-size:100px;color:purple;margin-bottom:10px;}
-    .result_box .complete_text {font-size:20px;font-weight:500;}
-    .result_box .score_text span {display:flex;margin:10px 0;font-size:18px;font-weight:500;}
-    .result_box .score_text span p {padding:0 4px;font-weight:600;}
-    .result_box .buttons {display:flex;margin:20px 0;}
-    .result_box .buttons button {margin:0 10px;height:45px;padding:0 20px;font-size:18px;font-weight:500;cursor:pointer;border:none;outline:none;border-radius:5px;border:1px solid purple;transition:all 0.3s ease;}
-    .buttons button.restart {color:#fff;background:purple;}
-    .buttons button.restart:hover {background:#0263ca;}
-    .buttons button.quit {color:purple;background:#fff;}
-    .buttons button.quit:hover {color:#fff;background:purple;}
-    .input-area {position:fixed;bottom:20px;left:20px;z-index:10;}
-    .input-area input {width:250px;padding:10px;border:none;background-color:transparent;color:transparent;font-size:16px;outline:1px solid purple;}
-    .input-area input:focus {outline:none;border-color:darkviolet;}
-    /* Timer Info for press T/dblclick */
-    .timer-info-wait {
-      text-align:center;font-size:1.1em;color:#800080;font-weight:500;margin-top:8px;opacity:0.8;
-      animation: blink 1.2s steps(2, start) infinite;
-    }
-    @keyframes blink { to { opacity: 0.5; } }
-    /* Random Number Modal Styles */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      z-index: 9999;
-      left: 0; top: 0; width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.45);
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-overlay.active {
-      display: flex;
-    }
-    .modal-box {
-      min-width: 320px;
+      width: 540px;
       background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 28px 0 rgba(0,0,0,.25), 0 6px 20px 0 rgba(0,0,0,.19);
-      padding: 32px 24px 24px 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      animation: popIn .25s cubic-bezier(.19,1,.22,1);
-      position: relative;
-    }
-    @keyframes popIn {
-      from { transform: scale(.8);}
-      to   { transform: scale(1);}
-    }
-    .modal-box h2 { color: purple; font-size: 1.5em; margin-bottom: 8px; }
-    .modal-box .rand-display {
-      font-size: 3em;
-      font-weight: 700;
-      color: #800080;
-      margin: 18px 0 16px 0;
-      letter-spacing: 2px;
-    }
-    .modal-box .inputs {
-      display: flex; gap: 10px; margin: 10px 0 15px 0;
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-box .inputs input {
-      width: 70px; padding: 6px 8px; border: 1px solid purple; border-radius: 5px; font-size: 1em; text-align: center;
-    }
-    .modal-box .modal-btns {
-      display: flex; gap: 8px; margin-top: 8px;
-      justify-content: center;
-    }
-    .modal-box button {
-      font-size: 15px;
-      padding: 8px 18px;
       border-radius: 5px;
-      border: 1px solid purple;
-      background: #fff;
-      color: purple;
-      cursor: pointer;
-      transition: background 0.15s;
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
     }
-    .modal-box button.roll {
-      background: purple;
-      color: #fff;
+    .info_box .info-title {
+      height: 60px;
+      width: 100%;
+      border-bottom: 1px solid lightgrey;
+      display: flex;
+      align-items: center;
+      padding: 0 30px;
+      border-radius: 5px 5px 0 0;
+      font-size: 20px;
       font-weight: 600;
     }
-    .modal-box button.roll:active {background: #600060;}
-    .modal-box button.close:active {background: #f5e8ff;}
-    .modal-box .rand-label {font-size: 1em; color:#444;}
-    .modal-box .small {font-size:0.95em; color:#888;}
-    @media (max-width: 500px) {
-      .modal-box {padding:18px 8px;}
-      .modal-box h2 {font-size:1.2em;}
-      .modal-box .rand-display {font-size:2em;}
-      .modal-box .inputs input {width:55px;}
+    .info_box .info-list {
+      padding: 15px 30px;
     }
-    /* Button to open modal */
-    .open-rand-btn {
-      position: fixed;
-      top: 18px;
-      right: 18px;
-      z-index: 20;
-      background: purple;
-      color: #fff;
-      border-radius: 50%;
-      border: none;
-      width: 52px;
-      height: 52px;
-      box-shadow: 0 2px 14px 0 rgba(0,0,0,0.10);
-      font-size: 28px;
-      cursor: pointer;
-      transition: background 0.15s;
+    .info_box .info-list .info {
+      margin: 5px 0;
+      font-size: 17px;
+    }
+    .info_box .info-list .info span {
+      font-weight: 600;
+      color: purple;
+    }
+    .info_box .buttons {
+      height: 60px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
+      padding: 0 30px;
+      border-top: 1px solid lightgrey;
     }
-    .open-rand-btn:hover { background: #600060;}
-    .open-rand-btn:active { background: #a960a9;}
-    .open-rand-btn .fa-dice { pointer-events: none;}
+    .info_box .buttons button {
+      margin: 0 5px;
+      height: 40px;
+      width: 100px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      border-radius: 5px;
+      border: 1px solid purple;
+      transition: all 0.3s ease;
+    }
+    .quiz_box {
+      width: 550px;
+      background: #fff;
+      border-radius: 5px;
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    .quiz_box header {
+      position: relative;
+      z-index: 2;
+      height: 70px;
+      padding: 0 30px;
+      background: #fff;
+      border-radius: 5px 5px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0px 3px 5px 1px rgba(0, 0, 0, 0.1);
+    }
+    .quiz_box header .title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .quiz_box header .timer {
+      color: #fff;
+      background: #800080;
+      border: 1px solid #600060;
+      height: 45px;
+      padding: 0 8px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 145px;
+    }
+    .quiz_box header .timer .time_left_txt {
+      font-weight: 400;
+      font-size: 17px;
+      user-select: none;
+    }
+    .quiz_box header .timer .timer_sec {
+      font-size: 18px;
+      font-weight: 500;
+      height: 30px;
+      width: 45px;
+      color: #000;
+      border-radius: 5px;
+      line-height: 30px;
+      text-align: center;
+      background: #fefefe;
+      border: 1px solid mediumpurple;
+      user-select: none;
+    }
+    .quiz_box header .time_line {
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      height: 3px;
+      background: purple;
+    }
+    section {
+      padding: 25px 30px 20px 30px;
+      background: #fff;
+    }
+    section .que_text {
+      font-size: 25px;
+      font-weight: 600;
+      user-select: none;
+    }
+    section .option_list {
+      padding: 20px 0px;
+      display: block;
+    }
+    section .option_list .option {
+      background: #ffeeff;
+      border: 1px solid #a8b0fe;
+      border-radius: 5px;
+      padding: 8px 15px;
+      font-size: 17px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      opacity: 1;
+    }
+    section .option_list .option:last-child {
+      margin-bottom: 0px;
+    }
+    section .option_list .option:hover {
+      color: #004085;
+      background: #cce5ff;
+      border: 1px solid #b8daff;
+    }
+    section .option_list .option.correct {
+      color: #155724;
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+    }
+    section .option_list .option.incorrect {
+      color: #721c24;
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+    }
+    section .option_list .option.disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .option_list.hide-options {
+      opacity: 0.2;
+      pointer-events: none;
+    }
+    .option_list.show-options {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    section .option_list .option .icon {
+      height: 26px;
+      width: 26px;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      text-align: center;
+      font-size: 13px;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      line-height: 24px;
+    }
+    .option_list .option .icon.tick {
+      color: #23903c;
+      border-color: #23903c;
+      background: #d4edda;
+    }
+    .option_list .option .icon.cross {
+      color: #a42834;
+      background: #f8d7da;
+      border-color: #a42834;
+    }
+    footer {
+      height: 60px;
+      padding: 0 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid lightgrey;
+    }
+    footer .total_que span {
+      display: flex;
+      user-select: none;
+    }
+    footer .total_que span p {
+      font-weight: 500;
+      padding: 0 5px;
+    }
+    footer .total_que span p:first-child {
+      padding-left: 0px;
+    }
+    footer button {
+      height: 40px;
+      padding: 0 13px;
+      font-size: 18px;
+      font-weight: 400;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      color: #fff;
+      border-radius: 5px;
+      background: purple;
+      border: 1px solid purple;
+      line-height: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.95);
+      transition: all 0.3s ease;
+    }
+    footer button.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+    .result_box {
+      background: #fff;
+      border-radius: 5px;
+      display: flex;
+      padding: 25px 30px;
+      width: 450px;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    .result_box .icon {
+      font-size: 100px;
+      color: purple;
+      margin-bottom: 10px;
+    }
+    .result_box .complete_text {
+      font-size: 20px;
+      font-weight: 500;
+    }
+    .result_box .score_text span {
+      display: flex;
+      margin: 10px 0;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .result_box .score_text span p {
+      padding: 0 4px;
+      font-weight: 600;
+    }
+    .result_box .buttons {
+      display: flex;
+      margin: 20px 0;
+    }
+    .result_box .buttons button {
+      margin: 0 10px;
+      height: 45px;
+      padding: 0 20px;
+      font-size: 18px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      border-radius: 5px;
+      border: 1px solid purple;
+      transition: all 0.3s ease;
+    }
+    .buttons button.restart {
+      color: #fff;
+      background: purple;
+    }
+    .buttons button.restart:hover {
+      background: #0263ca;
+    }
+    .buttons button.quit {
+      color: purple;
+      background: #fff;
+    }
+    .buttons button.quit:hover {
+      color: #fff;
+      background: purple;
+    }
+    .input-area {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 10;
+    }
+    .input-area input {
+      width: 250px;
+      padding: 10px;
+      border: none;
+      background-color: transparent;
+      color: transparent;
+      font-size: 16px;
+      outline: 1px solid purple;
+    }
+    .input-area input:focus {
+      outline: none;
+      border-color: darkviolet;
+    }
+    /* Timer Info for press T/dblclick */
+    .timer-info-wait {
+      text-align: center;
+      font-size: 1.1em;
+      color: #800080;
+      font-weight: 500;
+      margin-top: 8px;
+      opacity: 0.8;
+      animation: blink 1.2s steps(2, start) infinite;
+    }
+    @keyframes blink {
+      to {
+        opacity: 0.5;
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Random Number Modal Trigger Button -->
-  <button class="open-rand-btn" title="Random Roll No. Picker" aria-label="Open Random Number Generator"><i class="fas fa-dice"></i></button>
-  <!-- Random Number Modal -->
-  <div class="modal-overlay" id="randModalOverlay">
-    <div class="modal-box">
-      <h2>Contestant Roll No.<br>Random Picker</h2>
-      <div class="rand-label small">Pick a random number between:</div>
-      <div class="inputs">
-        <input type="number" min="1" max="9999" id="randMin" value="1" />
-        <span style="font-size:1.3em;">&ndash;</span>
-        <input type="number" min="1" max="9999" id="randMax" value="30" />
-      </div>
-      <div class="rand-label">Roll No.:</div>
-      <div class="rand-display" id="randDisplay">?</div>
-      <div class="modal-btns">
-        <button class="roll" id="rollBtn"><i class="fas fa-random"></i> Roll</button>
-        <button class="close" id="closeRandModalBtn"><i class="fas fa-times"></i> Close</button>
-      </div>
-      <div class="small" style="margin-top:10px;opacity:0.7;">Use to pick a random contestant<br>(Shortcut: <b>g</b> or <b>G</b>)</div>
-    </div>
-  </div>
+  <!-- Quiz UI code above ... -->
 
-  <div class="start_btn"><button>Start Quiz</button></div>
+  <div class="start_btn">
+    <button>Start Quiz</button>
+  </div>
   <div class="info_box">
-    <div class="info-title"><span>Some Rules of this Rapid Fire Quiz</span></div>
+    <div class="info-title">
+      <span>Some Rules of this Rapid Fire Quiz</span>
+    </div>
     <div class="info-list">
       <div class="info">1. There are 10 questions</div>
-      <div class="info">2. You will have only <span>15 seconds</span> per each question.</div>
+      <div class="info">
+        2. You will have only <span>15 seconds</span> per each question.
+      </div>
       <div class="info">3. Once you select your answer, it can't be undone.</div>
       <div class="info">4. You can't select any option once time goes off.</div>
       <div class="info">5. You can't exit from the Quiz while you're playing.</div>
@@ -245,7 +425,7 @@
     </header>
     <section>
       <div class="que_text"></div>
-      <div class="timer-info-wait" style="display:none;"></div>
+      <div class="timer-info-wait" style="display: none;"></div>
       <div class="option_list"></div>
     </section>
     <footer>
@@ -255,7 +435,7 @@
   </div>
   <div class="result_box">
     <div class="icon">
-      <img src="https://bl-apis.tiiny.site/KBC.png" alt="KBC image">
+      <img src="https://bl-apis.tiiny.site/KBC.png" alt="KBC image" />
     </div>
     <div class="complete_text">You've completed the Quiz!</div>
     <div class="score_text"></div>
@@ -267,298 +447,226 @@
   <div class="input-area">
     <input type="text" id="shortcutInput" oninput="shortcuts();" placeholder="..." />
   </div>
+
   <script>
-    // --- RANDOM NUMBER GENERATOR POPUP ---
-    // Modal Elements
-    const randModalOverlay = document.getElementById('randModalOverlay');
-    const openRandBtn = document.querySelector('.open-rand-btn');
-    const closeRandModalBtn = document.getElementById('closeRandModalBtn');
-    const rollBtn = document.getElementById('rollBtn');
-    const randDisplay = document.getElementById('randDisplay');
-    const randMin = document.getElementById('randMin');
-    const randMax = document.getElementById('randMax');
-
-    // Open modal
-    function openRandomModal() {
-      randModalOverlay.classList.add('active');
-      document.body.style.overflow = "hidden";
-      randDisplay.textContent = '?';
-      randDisplay.style.color = "#800080";
-      setTimeout(() => {randMin.focus();}, 350);
-    }
-    openRandBtn.onclick = openRandomModal;
-
-    // Close modal
-    function closeRandModal() {
-      randModalOverlay.classList.remove('active');
-      document.body.style.overflow = "";
-    }
-    closeRandModalBtn.onclick = closeRandModal;
-    randModalOverlay.onclick = function(e) {
-      if (e.target === randModalOverlay) closeRandModal();
-    }
-    document.addEventListener('keydown', function(e){
-      if (randModalOverlay.classList.contains('active') && (e.key === "Escape" || e.key === "Esc")) closeRandModal();
-    });
-
-    // Roll random number
-    rollBtn.onclick = function() {
-      let min = parseInt(randMin.value, 10);
-      let max = parseInt(randMax.value, 10);
-      if (isNaN(min) || isNaN(max) || min > max || min < 1 || max < 1) {
-        randDisplay.textContent = '?';
-        randDisplay.style.color = "#d00";
-        randDisplay.title = "Invalid range";
-        return;
-      }
-      let num = Math.floor(Math.random() * (max - min + 1)) + min;
-      randDisplay.textContent = num;
-      randDisplay.style.color = "#800080";
-      randDisplay.title = "";
-    };
-    // Enter key in inputs triggers roll
-    randMin.onkeydown = randMax.onkeydown = function(e){
-      if(e.key === 'Enter') rollBtn.click();
-    }
-    // Ensure min/max are in correct order on blur/change
-    randMin.onblur = randMax.onblur = function() {
-      let min = parseInt(randMin.value, 10);
-      let max = parseInt(randMax.value, 10);
-      if (!isNaN(min) && !isNaN(max) && min > max) {
-        let t = randMin.value; randMin.value = randMax.value; randMax.value = t;
-      }
-    }
-
-    // Keyboard shortcut for generator: g or G
-    document.addEventListener('keydown', function(e){
-      if ((e.key === 'g' || e.key === 'G') && !randModalOverlay.classList.contains('active')) {
-        openRandomModal();
-      }
-    });
-
-    // --- QUIZ CODE BELOW ---
-  let questions = [
-  {
-    "numb": 1,
-    "question": "What is the defining characteristic of a contact force?",
-    "answer": "It requires physical touching of two objects",
-    "options": [
-      "It acts at a distance",
-      "It requires physical touching of two objects",
-      "It depends on magnetic fields",
-      "It only exists in liquids"
-    ]
-  },
-  {
-    "numb": 2,
-    "question": "Which force is generated by muscles in the human body when applying effort?",
-    "answer": "Muscular force",
-    "options": [
-      "Tension force",
-      "Muscular force",
-      "Normal force",
-      "Frictional force"
-    ]
-  },
-  {
-    "numb": 3,
-    "question": "Frictional force acts to:",
-    "answer": "Resist the relative motion of two surfaces in contact",
-    "options": [
-      "Help objects move freely",
-      "Resist the relative motion of two surfaces in contact",
-      "Pull objects apart",
-      "Increase the speed of moving objects"
-    ]
-  },
-  {
-    "numb": 4,
-    "question": "The tension force in a rope always:",
-    "answer": "Pulls",
-    "options": [
-      "Pushes",
-      "Pulls",
-      "Both pushes and pulls",
-      "Exists only in chains"
-    ]
-  },
-  {
-    "numb": 5,
-    "question": "Which force acts perpendicular to the surface when an object rests on it?",
-    "answer": "Normal force",
-    "options": [
-      "Applied force",
-      "Frictional force",
-      "Normal force",
-      "Gravitational force"
-    ]
-  },
-  {
-    "numb": 6,
-    "question": "Moment of force is best described as:",
-    "answer": "A rotational effect produced by a force about a pivot",
-    "options": [
-      "A force that causes linear acceleration",
-      "A rotational effect produced by a force about a pivot",
-      "A force due to gravity",
-      "A type of friction"
-    ]
-  },
-  {
-    "numb": 7,
-    "question": "The formula for calculating the moment of a force is:",
-    "answer": "Moment = Force × Perpendicular distance from pivot",
-    "options": [
-      "Moment = Force + Distance from pivot",
-      "Moment = Force × Perpendicular distance from pivot",
-      "Moment = Force ÷ Distance from pivot",
-      "Moment = Force - Distance from pivot"
-    ]
-  },
-  {
-    "numb": 8,
-    "question": "Which direction does a clockwise moment rotate?",
-    "answer": "Same direction as clock hands",
-    "options": [
-      "Opposite to clock hands",
-      "Same direction as clock hands",
-      "Randomly",
-      "Depends on force magnitude"
-    ]
-  },
-  {
-    "numb": 9,
-    "question": "The Principle of Moments states:",
-    "answer": "Clockwise moment equals anti-clockwise moment for equilibrium",
-    "options": [
-      "The sum of all forces is zero",
-      "Clockwise moment equals anti-clockwise moment for equilibrium",
-      "Forces act in pairs only",
-      "Moments increase with speed"
-    ]
-  },
-  {
-    "numb": 10,
-    "question": "Increasing the distance from the pivot point while applying a force:",
-    "answer": "Increases the moment",
-    "options": [
-      "Decreases the moment",
-      "Increases the moment",
-      "Has no effect",
-      "Changes direction of force"
-    ]
-  },
-  {
-    "numb": 11,
-    "question": "When pushing a door open, why is pushing near the handle easier than near the hinges?",
-    "answer": "Moment is larger at the handle due to longer distance from pivot",
-    "options": [
-      "Force decreases near handle",
-      "Moment is larger at the handle due to longer distance from pivot",
-      "Door weight smaller near handle",
-      "Friction is less near the hinge"
-    ]
-  },
-  {
-    "numb": 12,
-    "question": "If you want to slide a box across a carpeted floor, which force resists the motion?",
-    "answer": "Frictional force",
-    "options": [
-      "Muscular force",
-      "Frictional force",
-      "Tension force",
-      "Normal force"
-    ]
-  },
-  {
-    "numb": 13,
-    "question": "In a tug of war, the rope experiences which type of force?",
-    "answer": "Tension",
-    "options": [
-      "Friction",
-      "Tension",
-      "Applied force",
-      "Muscular"
-    ]
-  },
-  {
-    "numb": 14,
-    "question": "While standing on a seesaw, your weight contributes to the moment based on:",
-    "answer": "Your weight and your distance from the pivot",
-    "options": [
-      "Only your weight value",
-      "Your weight and your distance from the pivot",
-      "The total seesaw weight",
-      "Only the distance from the pivot"
-    ]
-  },
-  {
-    "numb": 15,
-    "question": "A wrench with a longer handle makes it easier to loosen a bolt because:",
-    "answer": "Moment increases due to greater distance from the pivot",
-    "options": [
-      "Force applied is larger",
-      "Moment increases due to greater distance from the pivot",
-      "Friction decreases",
-      "Bolt is lighter"
-    ]
-  },
-  {
-    "numb": 16,
-    "question": "When climbing a rope, which forces are mainly involved?",
-    "answer": "Muscular force and tension force",
-    "options": [
-      "Gravity and friction",
-      "Muscular force and tension force",
-      "Normal force and friction",
-      "Applied and magnetic forces"
-    ]
-  },
-  {
-    "numb": 17,
-    "question": "How does friction help you when you walk?",
-    "answer": "It provides the grip needed to prevent slipping",
-    "options": [
-      "It pushes you forward",
-      "It provides the grip needed to prevent slipping",
-      "It pulls you backward",
-      "It aids in acceleration only"
-    ]
-  },
-  {
-    "numb": 18,
-    "question": "If an applied horizontal force doubles while friction remains constant, what happens to the box’s acceleration?",
-    "answer": "It increases by more than double",
-    "options": [
-      "It stays the same",
-      "It doubles",
-      "It increases by less than double",
-      "It increases by more than double"
-    ]
-  },
-  {
-    "numb": 19,
-    "question": "What happens to a balanced seesaw if one side’s moment is greater than the other?",
-    "answer": "It tips toward the side with greater moment",
-    "options": [
-      "It remains balanced",
-      "It tips toward the side with greater moment",
-      "It tips toward the side with lesser moment",
-      "It moves randomly"
-    ]
-  },
-  {
-    "numb": 20,
-    "question": "Why do you need to push harder to slide a box on a carpet compared to a polished floor?",
-    "answer": "Carpet has a higher coefficient of friction, resisting motion more",
-    "options": [
-      "Polished floors have more tension",
-      "Carpet has a higher coefficient of friction, resisting motion more",
-      "You apply less muscular force on polished floors",
-      "Carpet provides more normal force"
-    ]
-  }
-];
+    // Questions array
+    let questions = [
+      {
+        numb: 1,
+        question: "What is the defining characteristic of a contact force?",
+        answer: "It requires physical touching of two objects",
+        options: [
+          "It acts at a distance",
+          "It requires physical touching of two objects",
+          "It depends on magnetic fields",
+          "It only exists in liquids",
+        ],
+      },
+      {
+        numb: 2,
+        question:
+          "Which force is generated by muscles in the human body when applying effort?",
+        answer: "Muscular force",
+        options: [
+          "Tension force",
+          "Muscular force",
+          "Normal force",
+          "Frictional force",
+        ],
+      },
+      {
+        numb: 3,
+        question: "Frictional force acts to:",
+        answer: "Resist the relative motion of two surfaces in contact",
+        options: [
+          "Help objects move freely",
+          "Resist the relative motion of two surfaces in contact",
+          "Pull objects apart",
+          "Increase the speed of moving objects",
+        ],
+      },
+      {
+        numb: 4,
+        question: "The tension force in a rope always:",
+        answer: "Pulls",
+        options: ["Pushes", "Pulls", "Both pushes and pulls", "Exists only in chains"],
+      },
+      {
+        numb: 5,
+        question: "Which force acts perpendicular to the surface when an object rests on it?",
+        answer: "Normal force",
+        options: [
+          "Applied force",
+          "Frictional force",
+          "Normal force",
+          "Gravitational force",
+        ],
+      },
+      {
+        numb: 6,
+        question: "Moment of force is best described as:",
+        answer: "A rotational effect produced by a force about a pivot",
+        options: [
+          "A force that causes linear acceleration",
+          "A rotational effect produced by a force about a pivot",
+          "A force due to gravity",
+          "A type of friction",
+        ],
+      },
+      {
+        numb: 7,
+        question: "The formula for calculating the moment of a force is:",
+        answer: "Moment = Force × Perpendicular distance from pivot",
+        options: [
+          "Moment = Force + Distance from pivot",
+          "Moment = Force × Perpendicular distance from pivot",
+          "Moment = Force ÷ Distance from pivot",
+          "Moment = Force - Distance from pivot",
+        ],
+      },
+      {
+        numb: 8,
+        question: "Which direction does a clockwise moment rotate?",
+        answer: "Same direction as clock hands",
+        options: [
+          "Opposite to clock hands",
+          "Same direction as clock hands",
+          "Randomly",
+          "Depends on force magnitude",
+        ],
+      },
+      {
+        numb: 9,
+        question: "The Principle of Moments states:",
+        answer: "Clockwise moment equals anti-clockwise moment for equilibrium",
+        options: [
+          "The sum of all forces is zero",
+          "Clockwise moment equals anti-clockwise moment for equilibrium",
+          "Forces act in pairs only",
+          "Moments increase with speed",
+        ],
+      },
+      {
+        numb: 10,
+        question: "Increasing the distance from the pivot point while applying a force:",
+        answer: "Increases the moment",
+        options: [
+          "Decreases the moment",
+          "Increases the moment",
+          "Has no effect",
+          "Changes direction of force",
+        ],
+      },
+      {
+        numb: 11,
+        question:
+          "When pushing a door open, why is pushing near the handle easier than near the hinges?",
+        answer: "Moment is larger at the handle due to longer distance from pivot",
+        options: [
+          "Force decreases near handle",
+          "Moment is larger at the handle due to longer distance from pivot",
+          "Door weight smaller near handle",
+          "Friction is less near the hinge",
+        ],
+      },
+      {
+        numb: 12,
+        question:
+          "If you want to slide a box across a carpeted floor, which force resists the motion?",
+        answer: "Frictional force",
+        options: [
+          "Muscular force",
+          "Frictional force",
+          "Tension force",
+          "Normal force",
+        ],
+      },
+      {
+        numb: 13,
+        question: "In a tug of war, the rope experiences which type of force?",
+        answer: "Tension",
+        options: ["Friction", "Tension", "Applied force", "Muscular"],
+      },
+      {
+        numb: 14,
+        question: "While standing on a seesaw, your weight contributes to the moment based on:",
+        answer: "Your weight and your distance from the pivot",
+        options: [
+          "Only your weight value",
+          "Your weight and your distance from the pivot",
+          "The total seesaw weight",
+          "Only the distance from the pivot",
+        ],
+      },
+      {
+        numb: 15,
+        question: "A wrench with a longer handle makes it easier to loosen a bolt because:",
+        answer: "Moment increases due to greater distance from the pivot",
+        options: [
+          "Force applied is larger",
+          "Moment increases due to greater distance from the pivot",
+          "Friction decreases",
+          "Bolt is lighter",
+        ],
+      },
+      {
+        numb: 16,
+        question: "When climbing a rope, which forces are mainly involved?",
+        answer: "Muscular force and tension force",
+        options: [
+          "Gravity and friction",
+          "Muscular force and tension force",
+          "Normal force and friction",
+          "Applied and magnetic forces",
+        ],
+      },
+      {
+        numb: 17,
+        question: "How does friction help you when you walk?",
+        answer: "It provides the grip needed to prevent slipping",
+        options: [
+          "It pushes you forward",
+          "It provides the grip needed to prevent slipping",
+          "It pulls you backward",
+          "It aids in acceleration only",
+        ],
+      },
+      {
+        numb: 18,
+        question:
+          "If an applied horizontal force doubles while friction remains constant, what happens to the box’s acceleration?",
+        answer: "It increases by more than double",
+        options: [
+          "It stays the same",
+          "It doubles",
+          "It increases by less than double",
+          "It increases by more than double",
+        ],
+      },
+      {
+        numb: 19,
+        question: "What happens to a balanced seesaw if one side’s moment is greater than the other?",
+        answer: "It tips toward the side with greater moment",
+        options: [
+          "It remains balanced",
+          "It tips toward the side with greater moment",
+          "It tips toward the side with lesser moment",
+          "It moves randomly",
+        ],
+      },
+      {
+        numb: 20,
+        question:
+          "Why do you need to push harder to slide a box on a carpet compared to a polished floor?",
+        answer: "Carpet has a higher coefficient of friction, resisting motion more",
+        options: [
+          "Polished floors have more tension",
+          "Carpet has a higher coefficient of friction, resisting motion more",
+          "You apply less muscular force on polished floors",
+          "Carpet provides more normal force",
+        ],
+      },
+    ];
 
     const start_btn = document.querySelector(".start_btn button");
     const info_box = document.querySelector(".info_box");
@@ -570,7 +678,7 @@
     const time_line = document.querySelector("header .time_line");
     const timeText = document.querySelector(".timer .time_left_txt");
     const timeCount = document.querySelector(".timer .timer_sec");
-    const shortcutInput = document.getElementById('shortcutInput');
+    const shortcutInput = document.getElementById("shortcutInput");
     const next_btn = document.querySelector("footer .next_btn");
     const bottom_ques_counter = document.querySelector("footer .total_que");
     const restart_quiz = result_box.querySelector(".buttons .restart");
@@ -636,41 +744,52 @@
       }
     };
 
+    // Utility shuffle function: Fisher-Yates shuffle
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
     // Show question WITHOUT options (and timer not started)
     function showQuestionsWithoutTimer(index) {
       timerStarted = false;
       const que_text = document.querySelector(".que_text");
       let que_tag = "<span>" + questions[index].numb + ". " + questions[index].question + "</span>";
       que_text.innerHTML = que_tag;
-      // Hide options, show info
       option_list.innerHTML = "";
       option_list.classList.remove("show-options");
       option_list.classList.add("hide-options");
       timerInfoWait.innerHTML = 'Press <b>T</b> or <b>Double Click</b> on question to start timer & see options';
       timerInfoWait.style.display = "block";
-      // Remove timer line
       time_line.style.width = "0px";
       timeCount.textContent = "15";
-      // Setup double click for timer start
       que_text.ondblclick = () => {
         if (!timerStarted) startTimerForQuestion();
       };
     }
 
-    // Show question WITH options (after timer started)
+    // Show question WITH options (shuffled)
     function showQuestions(index) {
       const que_text = document.querySelector(".que_text");
       let que_tag = "<span>" + questions[index].numb + ". " + questions[index].question + "</span>";
       que_text.innerHTML = que_tag;
+
+      // Copy and shuffle options
+      let optionsCopy = questions[index].options.slice();
+      optionsCopy = shuffleArray(optionsCopy);
+
       let option_tag = "";
-      for (let i = 0; i < 4; i++) {
-        option_tag += '<div class="option"><span>' + questions[index].options[i] + "</span></div>";
+      for (let i = 0; i < optionsCopy.length; i++) {
+        option_tag += '<div class="option"><span>' + optionsCopy[i] + "</span></div>";
       }
       option_list.innerHTML = option_tag;
       option_list.classList.remove("hide-options");
       option_list.classList.add("show-options");
       timerInfoWait.style.display = "none";
-      // Enable options
+
       const option = option_list.querySelectorAll(".option");
       for (let i = 0; i < option.length; i++) {
         option[i].setAttribute("onclick", "optionSelected(this)");
@@ -690,11 +809,11 @@
       startTimerLine(widthValue);
     }
 
-    document.addEventListener('keydown', function (e) {
+    document.addEventListener("keydown", function (e) {
       if (
         quiz_box.classList.contains("activeQuiz") &&
         !timerStarted &&
-        (e.key === 't' || e.key === 'T')
+        (e.key === "t" || e.key === "T")
       ) {
         startTimerForQuestion();
       }
@@ -707,7 +826,7 @@
       if (!timerStarted) return;
       clearInterval(counter);
       clearInterval(counterLine);
-      let userAns = answer.textContent;
+      let userAns = answer.textContent.trim();
       let correcAns = questions[que_count].answer;
       const allOptions = option_list.children.length;
       if (userAns == correcAns) {
@@ -718,7 +837,7 @@
         answer.classList.add("incorrect");
         answer.insertAdjacentHTML("beforeend", crossIconTag);
         for (let i = 0; i < allOptions; i++) {
-          if (option_list.children[i].textContent == correcAns) {
+          if (option_list.children[i].textContent.trim() == correcAns) {
             option_list.children[i].setAttribute("class", "option correct");
             option_list.children[i].insertAdjacentHTML("beforeend", tickIconTag);
           }
@@ -736,13 +855,28 @@
       result_box.classList.add("activeResult");
       const scoreText = result_box.querySelector(".score_text");
       if (userScore > 3) {
-        let scoreTag = "<span>and congrats! , You got <p>" + userScore + "</p> out of <p>" + questions.length + "</p></span>";
+        let scoreTag =
+          "<span>and congrats! , You got <p>" +
+          userScore +
+          "</p> out of <p>" +
+          questions.length +
+          "</p></span>";
         scoreText.innerHTML = scoreTag;
       } else if (userScore > 1) {
-        let scoreTag = "<span>and nice , You got <p>" + userScore + "</p> out of <p>" + questions.length + "</p></span>";
+        let scoreTag =
+          "<span>and nice , You got <p>" +
+          userScore +
+          "</p> out of <p>" +
+          questions.length +
+          "</p></span>";
         scoreText.innerHTML = scoreTag;
       } else {
-        let scoreTag = "<span>and sorry , You got only <p>" + userScore + "</p> out of <p>" + questions.length + "</p></span>";
+        let scoreTag =
+          "<span>and sorry , You got only <p>" +
+          userScore +
+          "</p> out of <p>" +
+          questions.length +
+          "</p></span>";
         scoreText.innerHTML = scoreTag;
       }
     }
@@ -759,7 +893,7 @@
           const allOptions = option_list.children.length;
           let correcAns = questions[que_count].answer;
           for (let i = 0; i < allOptions; i++) {
-            if (option_list.children[i].textContent == correcAns) {
+            if (option_list.children[i].textContent.trim() == correcAns) {
               option_list.children[i].setAttribute("class", "option correct");
               option_list.children[i].insertAdjacentHTML("beforeend", tickIconTag);
             }
@@ -771,6 +905,7 @@
         }
       }
     }
+
     function startTimerLine(time) {
       counterLine = setInterval(timer, 29);
       function timer() {
@@ -779,34 +914,92 @@
         if (time > 549) clearInterval(counterLine);
       }
     }
+
     function queCounter(index) {
-      let totalQueCounTag = "<span><p>" + index + "</p> of <p>" + questions.length + "</p> Questions</span>";
+      let totalQueCounTag =
+        "<span><p>" + index + "</p> of <p>" + questions.length + "</p> Questions</span>";
       bottom_ques_counter.innerHTML = totalQueCounTag;
     }
+
     // Keyboard Shortcuts Testing
     const shortcuts = () => {
       let input = shortcutInput.value;
-      let reset = () => {document.getElementById('shortcutInput').value = "";};
+      let reset = () => {
+        document.getElementById("shortcutInput").value = "";
+      };
       let input_length = input.length;
       if (input_length > input.length) return;
       if (input_length <= input.length) {
         switch (input) {
-          case 's':case 'S':reset();start_btn.click();break;
-          case '1':case 'h':case 'H':case 'a':case 'A':reset();selectOption(0);break;
-          case '2':case 'j':case 'J':case 'b':case 'B':reset();selectOption(1);break;
-          case '3':case 'k':case 'K':case 'c':case 'C':reset();selectOption(2);break;
-          case '4':case 'l':case 'L':case 'd':case 'D':reset();selectOption(3);break;
-          case 'n':case 'N':reset();next_btn.click();break;
-          case 'r':case 'R':reset();restart_quiz.click();break;
-          case 'q':case 'Q':reset();quit_quiz.click();break;
-          case 't':case 'T':reset();startTimerForQuestion();break;
-          case 'g':case 'G':reset();openRandomModal();break;
+          case "s":
+          case "S":
+            reset();
+            start_btn.click();
+            break;
+          case "1":
+          case "h":
+          case "H":
+          case "a":
+          case "A":
+            reset();
+            selectOption(0);
+            break;
+          case "2":
+          case "j":
+          case "J":
+          case "b":
+          case "B":
+            reset();
+            selectOption(1);
+            break;
+          case "3":
+          case "k":
+          case "K":
+          case "c":
+          case "C":
+            reset();
+            selectOption(2);
+            break;
+          case "4":
+          case "l":
+          case "L":
+          case "d":
+          case "D":
+            reset();
+            selectOption(3);
+            break;
+          case "n":
+          case "N":
+            reset();
+            next_btn.click();
+            break;
+          case "r":
+          case "R":
+            reset();
+            restart_quiz.click();
+            break;
+          case "q":
+          case "Q":
+            reset();
+            quit_quiz.click();
+            break;
+          case "t":
+          case "T":
+            reset();
+            startTimerForQuestion();
+            break;
+          case "g":
+          case "G":
+            reset();
+            openRandomModal();
+            break;
         }
       }
     };
     function selectOption(index) {
       const options = option_list.querySelectorAll(".option");
-      if (options[index] && !options[index].classList.contains('disabled')) options[index].click();
+      if (options[index] && !options[index].classList.contains("disabled"))
+        options[index].click();
     }
   </script>
 </body>
